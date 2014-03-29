@@ -1,5 +1,30 @@
 YUI.add('strider', function(Y) {
 	
+	var StriderManager = function() {
+		this.striderMap = {};
+		
+		this._add = function(strider) {
+			strider._managerGuid = YUI.guid('strider-manager-');
+			this.striderMap[strider._managerGuid] = strider;
+		};
+		
+		this._remove = function(strider) {
+			delete this.striderMap[strider._managerGuid];
+		};
+		
+		this.destroyAll = function() {
+			for (var guid in this.striderMap) {
+				if (this.striderMap.hasOwnProperty(guid)) {
+					this.striderMap[guid].destroy();
+				}
+			}
+		};
+	};
+	
+	var striderManager = new StriderManager();
+	
+	/*==========================================================*/
+	
 	var Strider = function(config) {
 		Strider.superclass.constructor.apply(this, arguments);
 	}
@@ -13,19 +38,51 @@ YUI.add('strider', function(Y) {
 		
 		contextNode: {
 			readOnly: true
+		},
+		
+		placeholderNode: {
+			readOnly: true
 		}
 	};
 	
+	Strider.NODE_CLASSNAME = 'strider-node';
+	Strider.CONTEXT_CLASSNAME = 'strider-context';
+	Strider.PLACEHOLDER_CLASSNAME = 'strider-placeholder';
+	
 	Y.extend(Strider, Y.Base, {
 		initializer: function(config) {
+			striderManager._add(this);
+			
 			this._set('striderNode', Y.one(config.striderNode));
+			this.get('striderNode').addClass(Strider.NODE_CLASSNAME);
+			
 			this._set('contextNode', Y.one(config.contextNode));
+			this.get('contextNode').addClass(Strider.CONTEXT_CLASSNAME);
+			
+			if (!config.placeholderNode) {
+				this._set('placeholderNode', this._createPlaceholder());
+				this.get('placeholderNode').addClass(Strider.PLACEHOLDER_CLASSNAME);
+				this.get('striderNode').insert(this.get('placeholderNode'), 'before');
+			}
 		},
 		
 		destructor: function() {
+			striderManager._remove(this);
+			
+			this.get('striderNode').removeClass(Strider.NODE_CLASSNAME);
+			this.get('contextNode').removeClass(Strider.CONTEXT_CLASSNAME);
+			this.get('placeholderNode').remove();
+		},
+		
+		_createPlaceholder: function() {
+			var placeholder = Y.Node.create('<div>');
+			placeholder.set('width', this.get('striderNode').get('width'));
+			placeholder.set('height', this.get('striderNode').get('height'));
+			return placeholder;
 		}
 	});
 	
+	Y.StriderManager = striderManager;
 	Y.Strider = Strider;
 	
 }, '0.0.1', {
