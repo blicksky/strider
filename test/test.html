@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Strider Tests</title>
+		
+		<style type="text/css">
+			.container {
+				width: 200px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="log" class="yui3-skin-sam"></div>
+
+		<div id="container1" class="container">
+			<h1>Heading 1</h1>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec adipiscing nunc ut nibh commodo condimentum. Sed facilisis mi sit amet sapien dapibus vulputate. Proin eget gravida quam. Pellentesque erat mauris, pulvinar id urna in, venenatis adipiscing magna. Ut lacinia eros nibh, quis placerat turpis varius sed. Ut venenatis nunc tincidunt auctor molestie. Donec lacinia augue nec vehicula rhoncus. Nam nec lacus ut arcu consectetur porta. Nam elementum lectus sed erat facilisis, ut imperdiet est imperdiet. Proin sed laoreet odio. Maecenas posuere eros at lorem facilisis, vel viverra mauris fermentum. Aliquam viverra tellus eu risus commodo dignissim. Vestibulum ut vulputate dui, id faucibus neque. Vestibulum eget ipsum justo. Aliquam gravida metus in mauris adipiscing, id feugiat eros laoreet.</p>
+			<p>Curabitur ipsum diam, gravida vehicula erat vel, semper tincidunt augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras eget adipiscing turpis. Pellentesque condimentum mollis ante vel lacinia. Curabitur tincidunt lacus et sapien posuere cursus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nunc arcu, semper vitae tincidunt ac, lacinia at quam. Morbi commodo libero non rutrum fermentum. Aenean non varius est. Nunc quis eleifend libero.</p>
+		</div>
+		
+		<div id="container2" class="container">
+			<h1>Heading 2</h1>
+			<p>Sed sollicitudin eget magna eget imperdiet. Sed a vehicula velit. Sed iaculis condimentum magna, a dapibus augue semper eget. Pellentesque pretium metus quis nunc adipiscing gravida. Donec a consequat urna, a rhoncus felis. Proin tortor lorem, volutpat vitae porttitor ut, vestibulum quis lacus. Aenean ac suscipit nunc. Morbi erat neque, lacinia ac dui in, vulputate auctor eros. Quisque et semper turpis. Donec gravida nisi sed ligula placerat lobortis ut id nunc. Morbi lobortis justo blandit vulputate dictum. In quis libero eu enim tincidunt consectetur tincidunt sed elit. Morbi orci neque, dignissim sit amet erat sit amet, fermentum feugiat sem. Proin a erat ultricies, dignissim magna eget, mollis eros. Etiam in quam ultricies mauris tincidunt porttitor.</p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse pharetra urna vel est mattis, nec commodo nisl molestie. Nullam interdum mattis arcu quis vehicula. Fusce id hendrerit nisl. Maecenas non nisi ipsum. Suspendisse vitae hendrerit metus. Nunc mollis dapibus metus, in ultricies urna volutpat vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis sem pellentesque nisi molestie elementum. Quisque dictum sagittis rhoncus. Nullam at massa ac libero placerat iaculis. Curabitur venenatis turpis non luctus ullamcorper. Pellentesque ut augue nec diam aliquam consequat at vitae diam. Mauris rhoncus ipsum pellentesque nunc molestie, et aliquam est malesuada.</p>
+			<p>Nullam tincidunt venenatis elit eget ultrices. Pellentesque sit amet velit vel nibh ullamcorper semper vulputate id leo. Nulla leo ipsum, volutpat vel massa et, sodales vehicula elit. Ut vestibulum urna vel condimentum mattis. Quisque turpis augue, mattis congue volutpat sagittis, aliquam vel massa. Aenean tempus tempor tortor eget tristique. Nullam eros elit, pretium a augue in, iaculis consectetur turpis. Fusce sit amet viverra dui. Donec et tristique lacus, non dignissim lacus. Fusce ac dui pharetra, aliquam orci vitae, accumsan urna. Cras facilisis ante nec condimentum tempor. Donec mattis libero nec vehicula semper. Sed molestie nibh vel lacus auctor dapibus. Donec nunc arcu, feugiat sit amet neque cursus, auctor lacinia nunc. Ut euismod diam eget luctus dignissim.</p>
+		</div>
+
+		<script src="http://yui.yahooapis.com/3.15.0/build/yui/yui-min.js"></script>
+		<script src="../src/strider.js"></script>
+		<script>
+		YUI({filter:'raw'}).use('test-console', 'strider', function (Y) {
+			var strider1 = new Y.Strider({
+				striderNode: '#container1 h1',
+				contextNode: '#container1'
+			});
+			
+		    // ... set up your test cases here ...
+			var testCase = new Y.Test.Case({
+				name: "Strider Tests",
+				
+				"strider node attributes are set correctly when provided as selectors": function() {
+					// given
+					var striderNodeSelector = '#container1 h1';
+					var contextNodeSelector = '#container1';
+					
+					// when
+					var strider = new Y.Strider({
+						striderNode: striderNodeSelector,
+						contextNode: contextNodeSelector
+					});
+					
+					// then
+					Y.Assert.isInstanceOf( Y.Node, strider.get('striderNode') );
+					Y.Assert.areEqual( Y.one(striderNodeSelector), strider.get('striderNode') );
+					
+					Y.Assert.isInstanceOf( Y.Node, strider.get('contextNode') );
+					Y.Assert.areEqual( Y.one(contextNodeSelector), strider.get('contextNode') );
+				},
+				
+				"strider node attributes are set correctly when provided as nodes": function() {
+					// given
+					var striderNode = Y.one('#container1 h1');
+					var contextNode = Y.one('#container1');
+	
+					// when
+					var strider = new Y.Strider({
+						striderNode: striderNode,
+						contextNode: contextNode
+					});
+					
+					// then
+					Y.Assert.isInstanceOf( Y.Node, strider.get('striderNode') );
+					Y.Assert.areEqual( striderNode, strider.get('striderNode') );
+					
+					Y.Assert.isInstanceOf( Y.Node, strider.get('contextNode') );
+					Y.Assert.areEqual( contextNode, strider.get('contextNode') );
+				},
+				
+				"strider node attributes can't be changed": function() {
+					// given
+					var striderNode = Y.one('#container1 h1');
+					var contextNode = Y.one('#container1');
+					
+					var strider = new Y.Strider({
+						striderNode: striderNode,
+						contextNode: contextNode
+					});
+					
+					// when
+					strider.set('striderNode', 'foo');
+					strider.set('contextNode', 'bar');
+					
+					// then
+					Y.Assert.areEqual( striderNode, strider.get('striderNode') );
+					Y.Assert.areEqual( contextNode, strider.get('contextNode') );
+				}
+			});
+		    
+		    
+		    // Render the console inside the #log div, then run the tests.
+		    new Y.Test.Console().render('#log');
+		    Y.Test.Runner.add(testCase);
+		    Y.Test.Runner.run();
+		});
+		</script>
+	</body>
+</html>
