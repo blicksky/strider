@@ -113,6 +113,7 @@ YUI.add('strider', function(Y) {
 			striderManager._remove(this);
 			
 			this.get('striderNode').removeClass(Strider.NODE_CLASSNAME);
+			this.get('striderNode').removeClass(Strider.STRIDING_CLASSNAME);
 			this.get('contextNode').removeClass(Strider.CONTEXT_CLASSNAME);
 			this.get('placeholderNode').remove();
 		},
