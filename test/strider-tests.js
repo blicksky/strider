@@ -1,13 +1,21 @@
 YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
 
+	var SCROLL_PADDER_ID = "testScrollPadder";
+	
 	var testCase = new Y.Test.Case({
 		name: "Strider Tests",
 
 		setUp: function() {
+			// added a very tall element to the bottom of the page so that we don't hit the bottom during tests
+			Y.one(document.body).append('<div id="'+SCROLL_PADDER_ID+'" style="9999px">');
 		},
 		
 		tearDown: function() {
+			// destroy any striders created during tests
 			Y.StriderManager.destroyAll();
+			
+			// remove the tall element added to the bottom of the page
+			Y.one('#'+SCROLL_PADDER_ID).remove();
 		},
 		
 		verifyNodeIdentityTypeAndClassName: function( node, identity, type, className ) {
