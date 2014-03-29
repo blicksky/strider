@@ -3,6 +3,14 @@ YUI.add('strider', function(Y) {
 	var StriderManager = function() {
 		this.striderMap = {};
 		
+		this._eachStrider = function(fn) {
+			for (var guid in this.striderMap) {
+				if (this.striderMap.hasOwnProperty(guid)) {
+					fn.call(this, this.striderMap[guid]);
+				}
+			}
+		};
+		
 		this._add = function(strider) {
 			strider._managerGuid = YUI.guid('strider-manager-');
 			this.striderMap[strider._managerGuid] = strider;
@@ -12,12 +20,20 @@ YUI.add('strider', function(Y) {
 			delete this.striderMap[strider._managerGuid];
 		};
 		
+		this._update = function(strider) {
+			strider._update();
+		};
+		
+		this._updateAll = function() {
+			this._eachStrider(function(strider) {
+				strider._update();
+			});
+		};
+		
 		this.destroyAll = function() {
-			for (var guid in this.striderMap) {
-				if (this.striderMap.hasOwnProperty(guid)) {
-					this.striderMap[guid].destroy();
-				}
-			}
+			this._eachStrider(function(strider) {
+				strider.destroy();
+			});
 		};
 	};
 	
@@ -27,6 +43,8 @@ YUI.add('strider', function(Y) {
 	
 	var Strider = function(config) {
 		Strider.superclass.constructor.apply(this, arguments);
+		
+		this._striding = false;
 	}
 	
 	Strider.NAME = "strider";
@@ -50,6 +68,24 @@ YUI.add('strider', function(Y) {
 	Strider.PLACEHOLDER_CLASSNAME = 'strider-placeholder';
 	
 	Y.extend(Strider, Y.Base, {
+		_striding: null,
+		
+		_createPlaceholder: function() {
+			var placeholder = Y.Node.create('<div>');
+			placeholder.set('width', this.get('striderNode').get('width'));
+			placeholder.set('height', this.get('striderNode').get('height'));
+			return placeholder;
+		},
+		
+		_update: function() {
+			if (Y.DOM.docScrollY() > this.get('contextNode').getY()) {
+				this._striding = true;
+			}
+			else {
+				this._striding = false;
+			}
+		},
+		
 		initializer: function(config) {
 			striderManager._add(this);
 			
@@ -74,12 +110,10 @@ YUI.add('strider', function(Y) {
 			this.get('placeholderNode').remove();
 		},
 		
-		_createPlaceholder: function() {
-			var placeholder = Y.Node.create('<div>');
-			placeholder.set('width', this.get('striderNode').get('width'));
-			placeholder.set('height', this.get('striderNode').get('height'));
-			return placeholder;
+		isStriding: function() {
+			return this._striding;
 		}
+		
 	});
 	
 	Y.StriderManager = striderManager;

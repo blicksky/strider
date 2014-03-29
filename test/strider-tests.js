@@ -2,12 +2,20 @@ YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
 
 	var SCROLL_PADDER_ID = "testScrollPadder";
 	
+	var scrollWindowTo = function(scrollPosition) {
+		Y.config.doc.documentElement.scrollTop = Y.config.doc.body.scrollTop = scrollPosition;
+		
+		Y.StriderManager._updateAll();
+	};
+	
 	var testCase = new Y.Test.Case({
 		name: "Strider Tests",
 
 		setUp: function() {
 			// added a very tall element to the bottom of the page so that we don't hit the bottom during tests
 			Y.one(document.body).append('<div id="'+SCROLL_PADDER_ID+'" style="9999px">');
+			
+			scrollWindowTo(0);
 		},
 		
 		tearDown: function() {
@@ -73,6 +81,48 @@ YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
 			// then
 			Y.Assert.areEqual( striderNode, strider.get('striderNode') );
 			Y.Assert.areEqual( contextNode, strider.get('contextNode') );
+		},
+		
+		"strider is not striding when scrolled to the top of the page": function() {
+			// given
+			var strider = new Y.Strider({
+				striderNode: '#container1 h1',
+				contextNode: '#container1'
+			});
+			
+			// when
+			scrollWindowTo(0);
+			
+			// then
+			Y.assert( !strider.isStriding(), "strider should not be striding" );
+		},
+		
+		"strider is not striding when scrolled to just at the context's top": function() {
+			// given
+			var strider = new Y.Strider({
+				striderNode: '#container1 h1',
+				contextNode: '#container1'
+			});
+			
+			// when
+			scrollWindowTo( Y.one('#container1').getY() );
+			
+			// then
+			Y.assert( !strider.isStriding(), "strider should not be striding" );
+		},
+		
+		"strider is striding when scrolled to just below the context's top": function() {
+			// given
+			var strider = new Y.Strider({
+				striderNode: '#container1 h1',
+				contextNode: '#container1'
+			});
+			
+			// when
+			scrollWindowTo( Y.one('#container1').getY() + 1 );
+			
+			// then
+			Y.assert( strider.isStriding(), "strider should be striding" );
 		},
 		
 		/* TODO: replace this with a test that doesn't know the implementation details of width and height.
