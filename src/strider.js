@@ -86,5 +86,5 @@ YUI.add('strider', function(Y) {
 	Y.Strider = Strider;
 	
 }, '0.0.1', {
-	requires: ['base']
+	requires: ['base','node']
 });
