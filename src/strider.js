@@ -39,6 +39,10 @@ YUI.add('strider', function(Y) {
 	
 	var striderManager = new StriderManager();
 	
+	Y.one(Y.config.win).on('scroll', function(event) {
+		striderManager._updateAll();
+	}, this, true);
+	
 	/*==========================================================*/
 	
 	var Strider = function(config) {
@@ -66,6 +70,7 @@ YUI.add('strider', function(Y) {
 	Strider.NODE_CLASSNAME = 'strider-node';
 	Strider.CONTEXT_CLASSNAME = 'strider-context';
 	Strider.PLACEHOLDER_CLASSNAME = 'strider-placeholder';
+	Strider.STRIDING_CLASSNAME = 'strider-striding'
 	
 	Y.extend(Strider, Y.Base, {
 		_striding: null,
@@ -77,13 +82,15 @@ YUI.add('strider', function(Y) {
 			return placeholder;
 		},
 		
+		_isPageScrolledBeyondContextTop: function() {
+			return Y.DOM.docScrollY() > this.get('contextNode').getY();
+		},
+		
 		_update: function() {
-			if (Y.DOM.docScrollY() > this.get('contextNode').getY()) {
-				this._striding = true;
-			}
-			else {
-				this._striding = false;
-			}
+			var shouldBeStriding = this._isPageScrolledBeyondContextTop();
+			
+			this._striding = shouldBeStriding;
+			this.get('striderNode').toggleClass(Strider.STRIDING_CLASSNAME, shouldBeStriding);
 		},
 		
 		initializer: function(config) {

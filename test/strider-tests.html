@@ -31,14 +31,30 @@
 
 		<script src="http://yui.yahooapis.com/3.15.0/build/yui/yui-min.js"></script>
 		<script src="../src/strider.js"></script>
-		<script src="strider-tests.js"></script>
+		<script src="./strider-tests.js"></script>
 		<script>
-		YUI().use('strider', function(Y) {
-		    // set up examples
-		    var strider1 = new Y.Strider({
-				striderNode: '#container1 h1',
-				contextNode: '#container1'
+		YUI({filter:'raw',combine:false}).use('strider', 'strider-tests', 'test', 'test-console', function(Y) {
+			// Render the console inside the #log div, then run the tests.
+		    new Y.Test.Console().render('#log');
+			
+			var testSuite = new Y.Test.Suite('strider test suite');
+			testSuite.add(Y.striderTestCase);
+		    Y.Test.Runner.add(testSuite);
+		    
+		    Y.Test.Runner.on('testcasecomplete', function(event) {
+			    // set up examples
+			    var strider1 = new Y.Strider({
+					striderNode: '#container1 h1',
+					contextNode: '#container1'
+				});
+			    
+			    var strider2 = new Y.Strider({
+					striderNode: '#container2 h1',
+					contextNode: '#container2'
+				});
 			});
+		    
+		    Y.Test.Runner.run();
 		});
 		</script>
 	</body>

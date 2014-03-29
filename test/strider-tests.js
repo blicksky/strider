@@ -1,4 +1,4 @@
-YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
+YUI.add('strider-tests', function(Y) {
 
 	var SCROLL_PADDER_ID = "testScrollPadder";
 	
@@ -24,6 +24,8 @@ YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
 			
 			// remove the tall element added to the bottom of the page
 			Y.one('#'+SCROLL_PADDER_ID).remove();
+			
+			scrollWindowTo(0);
 		},
 		
 		verifyNodeIdentityTypeAndClassName: function( node, identity, type, className ) {
@@ -147,9 +149,8 @@ YUI({filter:'raw'}).use('test-console', 'strider', 'node', function (Y) {
 	});
     
     
-    // Render the console inside the #log div, then run the tests.
-    new Y.Test.Console().render('#log');
-    Y.Test.Runner.add(testCase);
-    Y.Test.Runner.run();
+    Y.striderTestCase = testCase;
 
+}, '0.0.1', {
+	requires: ['strider', 'node', 'test']
 });
